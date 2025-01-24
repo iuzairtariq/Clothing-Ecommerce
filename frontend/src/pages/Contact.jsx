@@ -14,8 +14,8 @@ const Contact = () => {
         <img className='w-full md:max-w-[480px] rounded-xl' src={assets.contact_img} alt="" />
         <div className='flex flex-col justify-center items-start gap-6'>
           <p className='font-semibold text-xl text-slate-600 dark:text-slate-400'>Our Store</p>
-          <p className='text-slate-600 dark:text-slate-400'>L-139 Sector 7B <br />Karachi, Pakistan</p>
-          <p className='text-slate-600 dark:text-slate-400'>Phone: 0317-2684802 <br />Email:iuzairtariq@gmail.com</p>
+          <p className='text-slate-600 dark:text-slate-400'>Karachi, Pakistan</p>
+          <p className='text-slate-600 dark:text-slate-400'>Phone: 0317-2684802 <br /> Email: uzairtariq102@gmail.com</p>
           <p className='text-xl font-semibold text-slate-600 dark:text-slate-400'>Careers at Forever</p>
           <p className='text-slate-600 dark:text-slate-400'>Learn more about our teams and job openings</p>
           <Button>Explore Jobs</Button>
