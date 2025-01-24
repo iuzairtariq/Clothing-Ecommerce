@@ -75,7 +75,15 @@ const Product = () => {
               }
             </div>
           </div>
-          <Button onClick={() => addToCart(productData._id, size)}>ADD TO CART</Button>
+          <div className={`${!size ? 'cursor-not-allowed' : ''}`}>
+            <Button
+              className={`${!size ? 'opacity-50' : 'cursor-pointer'}`}
+              disabled={!size}
+              onClick={() => addToCart(productData._id, size)}
+            >
+              ADD TO CART
+            </Button>
+          </div>
         </div>
       </div>
 

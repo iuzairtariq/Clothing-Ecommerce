@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CartTotal from '@/components/CartTotal';
@@ -76,16 +76,14 @@ const Cart = () => {
       <div className="flex justify-end my-20">
         <div className="w-full sm:w-[450px]">
           <CartTotal />
-          <div className="text-end mt-5">
-            <div className={`inline-block ${cartData.length === 0 ? 'cursor-not-allowed' : ''}`}>
-              <Button
-                onClick={handleProceedToCheckout}
-                disabled={cartData.length === 0}
-                className={`${cartData.length === 0 ? 'opacity-50' : 'cursor-pointer'}`}
-              >
-                PROCEED TO CHECKOUT
-              </Button>
-            </div>
+          <div className={`text-end mt-5 ${cartData.length === 0 ? 'cursor-not-allowed' : ''}`}>
+            <Button
+              onClick={handleProceedToCheckout}
+              disabled={cartData.length === 0}
+              className={`${cartData.length === 0 ? 'opacity-50' : 'cursor-pointer'}`}
+            >
+              PROCEED TO CHECKOUT
+            </Button>
           </div>
         </div>
       </div>

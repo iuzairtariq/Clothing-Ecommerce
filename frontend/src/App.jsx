@@ -13,7 +13,8 @@ import Navbar from './components/Navbar';
 import { ThemeProvider } from './components/ThemeProvider';
 import Footer from './components/Footer';
 import SearchBar from './components/SearchBar';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Verify from './pages/Verify';
 
 const App = () => {
@@ -23,7 +24,6 @@ const App = () => {
   return (
     <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
       <div className='px-4 sm:px-8 md:px-12 lg:px-16'>
-        <ToastContainer position='bottom-right' autoClose={2500} />
         <Navbar />
         <SearchBar />
         <Routes>
@@ -38,6 +38,7 @@ const App = () => {
           <Route path='/orders' element={<Orders />} />
           <Route path='/verify' element={<Verify />} />
         </Routes>
+        <ToastContainer position='bottom-right' autoClose={2500} />
         {showFooter && <Footer />}
       </div>
     </ThemeProvider>

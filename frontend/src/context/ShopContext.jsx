@@ -19,8 +19,7 @@ const ShopContextProvider = (props) => {
 
     const addToCart = async (itemId, size) => {
         if (!size) {
-            toast.error('Select Product Size')
-            return;
+            return null;
         }
 
         let cartData = structuredClone(cartItems);
@@ -34,15 +33,13 @@ const ShopContextProvider = (props) => {
         } else {
             cartData[itemId][size] = 1; // for same item but different size
         }
-
-        setCartItems(cartData, toast.success('Product Added'));
+        setCartItems(cartData);
 
         if (token) {
             try {
                 await axios.post(backendUrl + '/api/cart/add', { itemId, size }, { headers: { token } })
             } catch (error) {
                 console.log(error);
-                toast.error(error.message)
             }
         }
     }
