@@ -1,48 +1,76 @@
-import Title from '@/components/Title'
-import { Button } from '@/components/ui/button'
-import { ShopContext } from '@/context/ShopContext'
-import axios from 'axios'
-import React, { useContext, useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
+import Title from '@/components/Title';
+import { Button } from '@/components/ui/button';
+import { ShopContext } from '@/context/ShopContext';
+import axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 const Orders = () => {
-  const { backendUrl, token, currency } = useContext(ShopContext)
+  const { backendUrl, token, currency } = useContext(ShopContext);
 
-  const [orderData, setOrderData] = useState([])
+  const [orderData, setOrderData] = useState([]);
 
   const loadOrderData = async () => {
     try {
       if (!token) {
-        return null
+        return null;
       }
 
-      const response = await axios.post(backendUrl + '/api/order/userorders', {}, { headers: { token } })
-      // console.log(response.data);
+      const response = await axios.post(backendUrl + '/api/order/userorders', {}, { headers: { token } });
       if (response.data.success) {
-        let allOrdersItem = []
-        response.data.orders.map((order) => {
-          order.items.map((item) => {
-            item['status'] = order.status
-            item['payment'] = order.payment
-            item['paymentMethod'] = order.paymentMethod
-            item['date'] = order.date
-            allOrdersItem.push(item)
-          })
-        })
-        // console.log(allOrdersItem);
-        setOrderData(allOrdersItem.reverse())
-        toast.info('Track order updated')
+        let allOrdersItem = [];
+        response.data.orders.forEach((order) => {
+          order.items.forEach((item) => {
+            item['orderId'] = order._id; // Add order ID to each item
+            item['status'] = order.status;
+            item['payment'] = order.payment;
+            item['paymentMethod'] = order.paymentMethod;
+            item['date'] = order.date;
+            allOrdersItem.push(item);
+          });
+        });
+        setOrderData(allOrdersItem.reverse());
       }
 
     } catch (error) {
       console.error(error);
-      toast.error('Failed to load track order!')
+      toast.error('Failed to load orders!');
     }
-  }
+  };
 
   useEffect(() => {
-    loadOrderData()
-  }, [token])
+    loadOrderData();
+  }, [token]);
+
+  const trackOrder = async (orderId) => {
+    try {
+      const response = await axios.post(backendUrl + '/api/order/track', { orderId }, { headers: { token } });
+      console.log(response.data); // Log the API response
+
+      if (response.data.success) {
+        let isUpdated = false;
+        const updatedOrderData = orderData.map((item) => {
+          if (item.orderId === orderId && item.status !== response.data.status) {
+            isUpdated = true;
+            return { ...item, status: response.data.status };
+          }
+          return item;
+        });
+        setOrderData(updatedOrderData);
+
+        if (isUpdated) {
+          toast.success('Order status updated');
+        } else {
+          toast.info(`The track order status is as follows: ${response.data.status}`);
+        }
+      } else {
+        toast.error(response.data.message); // Display error message from API
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to track order!');
+    }
+  };
 
   return (
     <div className='py-16'>
@@ -71,13 +99,13 @@ const Orders = () => {
                 <p className='min-w-2 h-2 rounded-full bg-green-400'></p>
                 <p className='text-sm md:text-base'>{item.status}</p>
               </div>
-              <Button onClick={loadOrderData}>Track Order</Button>
+              <Button onClick={() => trackOrder(item.orderId)}>Track Order</Button>
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Orders
+export default Orders;

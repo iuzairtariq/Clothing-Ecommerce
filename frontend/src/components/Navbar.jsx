@@ -86,7 +86,7 @@ const Navbar = () => {
                             <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
                         </DropdownMenuContent>}
                 </DropdownMenu>
-                <Link to='/cart' className='relative'> 
+                <Link to='/cart' className='relative'>
                     <ShoppingCartIcon className='text-[#475569] dark:text-[#94A3B8]' />
                     <p className='absolute right-[-5px] top-[-5px] w-4 leading-4 text-center bg-slate-700 text-white aspect-square rounded-full text-[8px] font-semibold'>{getCartCount()}</p>
                 </Link>
@@ -95,12 +95,12 @@ const Navbar = () => {
                 </div>
                 <div className='flex sm:hidden'>
                     <Sheet>
-                        <SheetTrigger><MenuIcon /></SheetTrigger>
+                        <SheetTrigger><MenuIcon className='text-[#475569] dark:text-[#94A3B8]' /></SheetTrigger>
                         <SheetContent>
                             <SheetHeader>
                                 <SheetTitle>
                                     <NavLink to='/'>
-                                        <div className='flex justify-between items-center mt-6 mb-3'>
+                                        <div className='flex justify-between items-center mt-6 mb-3 text-slate-600 dark:text-slate-400'>
                                             CLOTHING
                                             <ModeToggle />
                                         </div>
@@ -108,19 +108,19 @@ const Navbar = () => {
                                 </SheetTitle>
                                 <SheetDescription>
                                     <NavLink to='/about' className='flex flex-col items-center font-semibold'>
-                                        <h1>About</h1>
+                                        <h1 className='text-slate-600 dark:text-slate-400'>About</h1>
                                         <hr className='w-6 border-none h-[1.5px] bg-red-600 hidden' />
                                     </NavLink>
                                 </SheetDescription>
                                 <SheetDescription>
                                     <NavLink to='/collection' className='flex flex-col items-center font-semibold'>
-                                        <h1>Collection</h1>
+                                        <h1 className='text-slate-600 dark:text-slate-400'>Collection</h1>
                                         <hr className='w-6 border-none h-[1.5px] bg-red-600 hidden' />
                                     </NavLink>
                                 </SheetDescription>
                                 <SheetDescription>
                                     <NavLink to='/contact' className='flex flex-col items-center font-semibold'>
-                                        <h1>Contact</h1>
+                                        <h1 className='text-slate-600 dark:text-slate-400'>Contact</h1>
                                         <hr className='w-6 border-none h-[1.5px] bg-red-600 hidden' />
                                     </NavLink>
                                 </SheetDescription>

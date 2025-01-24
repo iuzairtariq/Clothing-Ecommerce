@@ -12,8 +12,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 // Placing orders using COD Method
 const placeOrder = async (req, res) => {
     try {
-
-
         const { userId, items, amount, address } = req.body
 
         const orderData = {
@@ -154,4 +152,21 @@ const updateStatus = async (req, res) => {
     }
 }
 
-export { verifyStripe, placeOrder, placeOrderStripe, placeOrderRazorpay, allOrders, userOrders, updateStatus }
+// Track a specific order
+const trackOrder = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    const order = await orderModel.findById(orderId);
+
+    if (order) {
+      res.json({ success: true, status: order.status });
+    } else {
+      res.json({ success: false, message: "Order not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+}
+
+export { verifyStripe, placeOrder, placeOrderStripe, placeOrderRazorpay, allOrders, userOrders, updateStatus, trackOrder }

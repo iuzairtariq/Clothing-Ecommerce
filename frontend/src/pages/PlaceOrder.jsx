@@ -1,17 +1,17 @@
-import { assets } from '@/assets/frontend_assets/assets'
-import CartTotal from '@/components/CartTotal'
-import Title from '@/components/Title'
-import { Button } from '@/components/ui/button'
-import { ShopContext } from '@/context/ShopContext'
-import axios from 'axios'
-import React, { useContext, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { toast } from 'react-toastify'
+import { assets } from '@/assets/frontend_assets/assets';
+import CartTotal from '@/components/CartTotal';
+import Title from '@/components/Title';
+import { Button } from '@/components/ui/button';
+import { ShopContext } from '@/context/ShopContext';
+import axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const PlaceOrder = () => {
-  const { navigate, backendUrl, token, cartItems, setCartItems, getCartAmount, deliveryFee, products } = useContext(ShopContext)
-  const [method, setMethod] = useState('cod')
-  const [isLoading, setIsLoading] = useState(false) // Step 1: Add isLoading state
+  const { navigate, backendUrl, token, cartItems, setCartItems, getCartAmount, deliveryFee, products } = useContext(ShopContext);
+  const [method, setMethod] = useState('cod');
+  const [isLoading, setIsLoading] = useState(false); // Step 1: Add isLoading state
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -23,29 +23,40 @@ const PlaceOrder = () => {
     zipcode: '',
     country: '',
     phone: ''
-  })
+  });
+
+  useEffect(() => {
+    const savedFormData = JSON.parse(localStorage.getItem('formData'));
+    if (savedFormData) {
+      setFormData(savedFormData);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('formData', JSON.stringify(formData));
+  }, [formData]);
 
   const onChangeHandler = (event) => {
-    const name = event.target.name
-    const value = event.target.value
+    const name = event.target.name;
+    const value = event.target.value;
 
-    setFormData(data => ({ ...data, [name]: value }))
-  }
+    setFormData(data => ({ ...data, [name]: value }));
+  };
 
   const onSubmitHandler = async (event) => {
-    event.preventDefault()
-    setIsLoading(true) // Step 2: Set isLoading to true when submission starts
+    event.preventDefault();
+    setIsLoading(true); // Step 2: Set isLoading to true when submission starts
     try {
-      let orderItems = []
+      let orderItems = [];
 
       for (const items in cartItems) {
         for (const item in cartItems[items]) {
           if (cartItems[items][item] > 0) {
-            const itemInfo = structuredClone(products.find(product => product._id === items))
+            const itemInfo = structuredClone(products.find(product => product._id === items));
             if (itemInfo) {
-              itemInfo.size = item
-              itemInfo.quantity = cartItems[items][item]
-              orderItems.push(itemInfo)
+              itemInfo.size = item;
+              itemInfo.quantity = cartItems[items][item];
+              orderItems.push(itemInfo);
             }
           }
         }
@@ -56,27 +67,28 @@ const PlaceOrder = () => {
         address: formData,
         items: orderItems,
         amount: getCartAmount() + deliveryFee
-      }
+      };
 
       switch (method) {
         // api call for COD
         case 'cod':
-          const response = await axios.post(backendUrl + '/api/order/place', orderData, { headers: { token } })
+          const response = await axios.post(backendUrl + '/api/order/place', orderData, { headers: { token } });
           if (response.data.success) {
-            setCartItems({})
-            navigate('/orders')
+            setCartItems({});
+            localStorage.removeItem('formData');
+            navigate('/orders');
           } else {
-            toast.error(response.data.message)
+            toast.error(response.data.message);
           }
           break;
 
         case 'stripe':
-          const responseStripe = await axios.post(backendUrl + '/api/order/stripe', orderData, { headers: { token } })
+          const responseStripe = await axios.post(backendUrl + '/api/order/stripe', orderData, { headers: { token } });
           if (responseStripe.data.success) {
-            const { session_url } = responseStripe.data
-            window.location.replace(session_url)
+            const { session_url } = responseStripe.data;
+            window.location.replace(session_url);
           } else {
-            toast.error(responseStripe.data.message)
+            toast.error(responseStripe.data.message);
           }
           break;
 
@@ -86,11 +98,11 @@ const PlaceOrder = () => {
 
     } catch (error) {
       console.log(error);
-      toast.error(error.message)
+      toast.error(error.message);
     } finally {
-      setIsLoading(false) // Step 2: Reset isLoading to false after the process
+      setIsLoading(false); // Step 2: Reset isLoading to false after the process
     }
-  }
+  };
 
   return (
     <form onSubmit={onSubmitHandler} className='flex flex-col sm:flex-row justify-evenly gap-6 pt-5 sm:pt-16 min-h-[80vh]'>
@@ -113,7 +125,7 @@ const PlaceOrder = () => {
           <input required onChange={onChangeHandler} name='state' value={formData.state} className='dark:bg-accent border border-gray-300 rounded py-1.5 px-3.5 w-full' type="text" placeholder='State' />
         </div>
         <div className='flex gap-3'>
-          <input onChange={onChangeHandler} name='zipcode' value={formData.zipcode} className='dark:bg-accent border border-gray-300 rounded py-1.5 px-3.5 w-full' type="number" placeholder='Zipcode' />
+          <input required onChange={onChangeHandler} name='zipcode' value={formData.zipcode} className='dark:bg-accent border border-gray-300 rounded py-1.5 px-3.5 w-full' type="number" placeholder='Zipcode' />
           <input required onChange={onChangeHandler} name='country' value={formData.country} className='dark:bg-accent border border-gray-300 rounded py-1.5 px-3.5 w-full' type="text" placeholder='Country' />
         </div>
         <input required onChange={onChangeHandler} name='phone' value={formData.phone} className='dark:bg-accent border border-gray-300 rounded py-1.5 px-3.5 w-full' type="number" placeholder='Phone' />
@@ -149,7 +161,7 @@ const PlaceOrder = () => {
         </div>
       </div>
     </form>
-  )
-}
+  );
+};
 
-export default PlaceOrder
+export default PlaceOrder;
