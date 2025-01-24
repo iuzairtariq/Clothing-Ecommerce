@@ -132,11 +132,11 @@ const PlaceOrder = () => {
       </div>
 
       {/* Right Side */}
-      <div className=''>
-        <div className='min-w-80'>
+      <div>
+        <div className='min-w-80 mt-3 sm:mt-0'>
           <CartTotal />
         </div>
-        <div className='mt-12'>
+        <div className='my-12'>
           <Title text1={'PAYMENT'} text2={'METHOD'} />
           <div className='flex gap-3  flex-col lg:flex-row'>
             <div onClick={() => setMethod('stripe')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer'>
@@ -152,7 +152,7 @@ const PlaceOrder = () => {
               <p className='text-slate-400 text-sm font-medium mx-3'>CASH ON DELIVERY</p>
             </div>
           </div>
-          <div className='w-full text-end mt-4'>
+          <div className='w-full text-end'>
             {/* Step 3: Update Button to show loading text and disable it */}
             <Button type='submit' className='mt-4 px-7 py-5' disabled={isLoading}>
               {isLoading ? 'Loading...' : 'PLACE ORDER'}

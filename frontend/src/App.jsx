@@ -19,7 +19,7 @@ import Verify from './pages/Verify';
 
 const App = () => {
   const location = useLocation();
-  const showFooter = !['/login', '/orders', '/cart'].includes(location.pathname);
+  const showFooter = !['/login', '/orders', '/cart', '/placeorder'].includes(location.pathname);
 
   return (
     <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>

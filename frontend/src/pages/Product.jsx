@@ -65,7 +65,7 @@ const Product = () => {
             <StarIcon size={20} color='yellow' className='bg-red-700 rounded' />
             <p className='pl-2 text-slate-600 dark:text-slate-400'>(122)</p>
           </div>
-          <p className='mt-5 text-3xl font-medium text-slate-600 dark:text-slate-400'>{currency}{productData.price}</p>
+          <p className='mt-5 text-3xl font-medium text-slate-600 dark:text-slate-400'>{currency} {productData.price}</p>
           <p className='mt-5 md:w-4/5 text-slate-600 dark:text-slate-400'>{productData.description}</p>
           <div className='flex flex-col gap-4 my-8'>
             <p className='text-slate-600 dark:text-slate-400'>Select Size</p>
