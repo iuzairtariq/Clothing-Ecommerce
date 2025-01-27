@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button'
 import { ShopContext } from '@/context/ShopContext'
 import axios from 'axios'
 import React, { useContext, useEffect, useState } from 'react'
-import { Navigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 const Login = () => {

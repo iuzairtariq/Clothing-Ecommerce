@@ -1,4 +1,4 @@
-import { CirclePlusIcon, ListCheckIcon, PackageIcon } from 'lucide-react'
+import { BoxIcon, CirclePlusIcon, ListCheckIcon } from 'lucide-react'
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
@@ -15,7 +15,7 @@ const Sidebar = () => {
                     <p className='hidden md:block'>List Items</p>
                 </NavLink>
                 <NavLink to='/orders' className='flex items-center gap-3 border border-gray-500 border-r-0 px-3 py-2 rounded-l'>
-                    <PackageIcon />
+                    <BoxIcon />
                     <p className='hidden md:block'>Orders</p>
                 </NavLink>
             </div>

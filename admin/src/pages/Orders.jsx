@@ -1,7 +1,6 @@
 import { backendUrl, currency } from '@/App'
 import Title from '@/components/Title'
 import axios from 'axios'
-import { BoxIcon } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
@@ -15,7 +14,7 @@ const Orders = ({ token }) => {
     }
     try {
       const response = await axios.post(backendUrl + '/api/order/list', {}, { headers: { token } })
-      console.log(response.data);
+      // console.log(response.data);
 
       if (response.data.success) {
         setOrders(response.data.orders.reverse())
@@ -53,15 +52,14 @@ const Orders = ({ token }) => {
         {
           orders.map((order, index) => (
             <div className='grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_1fr_1fr] gap-3 items-start border-2 border-slate-400 p-5 md:p-8 my-3 md:my-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400' key={index}>
-              <BoxIcon size={100} className='mx-auto' />
-              {/* <img src={jo product hai uski img ? } alt="" /> */}
+              <img src={order.items[0].image[0]} alt={order.items[0].name} className='mx-auto w-24' />
               <div>
                 <div>
                   {order.items.map((item, index) => {
                     if (index === order.items.length - 1) {
-                      return <p className='py-0.5' key={index}>{item.name} x {item.quantity} <span>{item.size}</span></p>
+                      return <p className='pb-0.5' key={index}>{item.name} x {item.quantity} <span>{item.size}</span></p>
                     } else {
-                      return <p className='py-0.5' key={index}>{item.name} x {item.quantity} <span>{item.size}</span>,</p>
+                      return <p className='pb-0.5' key={index}>{item.name} x {item.quantity} <span>{item.size}</span>,</p>
                     }
                   })}
                 </div>

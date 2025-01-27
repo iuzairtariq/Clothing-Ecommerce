@@ -3,7 +3,6 @@ import { assets } from '@/assets/admin_assets/assets'
 import Title from '@/components/Title'
 import { Button } from '@/components/ui/button'
 import axios from 'axios'
-import { ImagePlusIcon } from 'lucide-react'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 
@@ -152,7 +151,7 @@ const Add = ({ token }) => {
         <label className='cursor-pointer' htmlFor="bestseller">Add to bestseller</label>
       </div>
 
-      <Button type="submit" className='mt-4 px-7 py-5' disabled={isLoading}>
+      <Button type="submit" className='mt-4 px-7 py-5'>
         {isLoading ? 'Loading...' : 'ADD'}
       </Button>
     </form>
