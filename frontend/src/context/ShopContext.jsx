@@ -35,6 +35,7 @@ const ShopContextProvider = (props) => {
             cartData[itemId][size] = 1; // for same item but different size
         }
         setCartItems(cartData);
+        toast.success('Added to cart')
 
         if (token) {
             try {
@@ -65,7 +66,7 @@ const ShopContextProvider = (props) => {
         let cartData = structuredClone(cartItems)
         cartData[itemId][size] = quantity
 
-        setCartItems(cartData, toast.info('Product Updated'))
+        setCartItems(cartData, toast.info('Product updated'))
 
         if (token) {
             try {
@@ -97,7 +98,7 @@ const ShopContextProvider = (props) => {
     const getProductData = async () => {
         try {
             const response = await axios.get(backendUrl + '/api/product/list')
-            console.log(response);
+            // console.log(response);
 
             if (response.data.success) {
                 setProducts(response.data.products)

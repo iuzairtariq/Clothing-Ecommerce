@@ -16,7 +16,7 @@ const BestSeller = () => {
         <div className='pb-24'>
             <div className=' mb-10'>
                 <Title text1={'BEST'} text2={'SELLERS'} />
-                <p className='text-center w-3/4 m-auto text-xs sm:text-sm md:text-base text-slate-600'>
+                <p className='text-center w-3/4 m-auto text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-400'>
                     Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aspernatur distinctio, sint ullam provident laboriosam veritatis?
                 </p>
             </div>

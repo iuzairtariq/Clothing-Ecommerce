@@ -1,4 +1,4 @@
-import { assets } from '@/assets/frontend_assets/assets'
+import { assets } from '@/main/frontend_assets/assets'
 import Subscribtion from '@/components/Subscribtion'
 import Title from '@/components/Title'
 import React from 'react'

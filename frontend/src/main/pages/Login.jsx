@@ -22,6 +22,8 @@ const Login = () => {
         if (response.data.success) {
           setToken(response.data.token)
           localStorage.setItem('token', response.data.token)
+          toast.success(response.data.message)
+          navigate('/')
         }
         else {
           toast.error(response.data.message)
@@ -32,6 +34,8 @@ const Login = () => {
         if (response.data.success) {
           setToken(response.data.token)
           localStorage.setItem('token', response.data.token)
+          toast.success(response.data.message)
+          navigate('/')
         }
         else {
           toast.error(response.data.message)
@@ -45,11 +49,6 @@ const Login = () => {
       setIsLoading(false) // Step 2: Reset isLoading to false after the process
     }
   }
-
-  useEffect(() => {
-    if (token)
-      navigate('/')
-  }, [token])
 
   return (
     <form onSubmit={onSubmitHandler} className='flex flex-col items-center w-[90%] sm:max-w-96 m-auto py-16 gap-4 text-slate-500'>

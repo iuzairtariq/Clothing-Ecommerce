@@ -28,6 +28,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ShopContext } from '@/context/ShopContext'
+import { toast } from 'react-toastify'
 
 
 const Navbar = () => {
@@ -41,10 +42,11 @@ const Navbar = () => {
     }
 
     const logout = () => {
-        navigate('/login')
         localStorage.removeItem('token')
         setToken('')
         setCartItems({})
+        navigate('/login')
+        toast.success('Logged out Successfully')
     }
 
     return (

@@ -1,12 +1,12 @@
 import { backendUrl } from '@/App'
-import { assets } from '@/assets/admin_assets/assets'
+import { assets } from '@/admin/admin_assets/assets'
 import Title from '@/components/Title'
 import { Button } from '@/components/ui/button'
 import axios from 'axios'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 
-const Add = ({ token }) => {
+const Add = ({ adminToken }) => {
   const [image1, setImage1] = useState(false)
   const [image2, setImage2] = useState(false)
   const [image3, setImage3] = useState(false)
@@ -40,7 +40,13 @@ const Add = ({ token }) => {
       image3 && formData.append("image3", image3)
       image4 && formData.append("image4", image4)
 
-      const response = await axios.post(backendUrl + "/api/product/add", formData, { headers: { token } })
+      const response = await axios.post(backendUrl + "/api/product/add", formData, {
+        headers: {
+          Authorization: `Bearer ${adminToken}`,
+          "Content-Type": "multipart/form-data"
+        }
+      })
+
       console.log(response.data);
 
       if (response.data.success) {
@@ -68,24 +74,24 @@ const Add = ({ token }) => {
   return (
     <form onSubmit={onSubmitHandler} className='flex flex-col w-full items-start gap-3 text-slate-600 dark:text-slate-400'>
       <div>
-        <Title text1={'ADD'} text2={'PRODUCT'}/>
+        <Title text1={'ADD'} text2={'PRODUCT'} />
         <p className='mb-2'>Upload Image</p>
 
         <div className='flex gap-2'>
           <label htmlFor="image1">
-            <img className='w-20' src={!image1 ? assets.upload_area : URL.createObjectURL(image1)} alt="" />
+            <img className='w-20 cursor-pointer' src={!image1 ? assets.upload_area : URL.createObjectURL(image1)} alt="" />
             <input onChange={(e) => setImage1(e.target.files[0])} type="file" id='image1' hidden />
           </label>
           <label htmlFor="image2">
-            <img className='w-20' src={!image2 ? assets.upload_area : URL.createObjectURL(image2)} alt="" />
+            <img className='w-20 cursor-pointer' src={!image2 ? assets.upload_area : URL.createObjectURL(image2)} alt="" />
             <input onChange={(e) => setImage2(e.target.files[0])} type="file" id='image2' hidden />
           </label>
           <label htmlFor="image3">
-            <img className='w-20' src={!image3 ? assets.upload_area : URL.createObjectURL(image3)} alt="" />
+            <img className='w-20 cursor-pointer' src={!image3 ? assets.upload_area : URL.createObjectURL(image3)} alt="" />
             <input onChange={(e) => setImage3(e.target.files[0])} type="file" id='image3' hidden />
           </label>
           <label htmlFor="image4">
-            <img className='w-20' src={!image4 ? assets.upload_area : URL.createObjectURL(image4)} alt="" />
+            <img className='w-20 cursor-pointer' src={!image4 ? assets.upload_area : URL.createObjectURL(image4)} alt="" />
             <input onChange={(e) => setImage4(e.target.files[0])} type="file" id='image4' hidden />
           </label>
 

@@ -7,6 +7,8 @@ const createToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET)
 }
 
+const tokenBlacklist = [];
+
 // Route for user login
 const loginUser = async (req, res) => {
     try {
@@ -18,7 +20,7 @@ const loginUser = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password)
         if (isMatch) {
             const token = createToken(user._id)
-            res.json({ success: true, token })
+            res.json({ success: true, token, message: "Logged in Successfully" })
         }
         else {
             res.json({ success: false, message: "Invalid Credentials" })
@@ -57,7 +59,7 @@ const registerUser = async (req, res) => {
         const user = await newUser.save()
         const token = createToken(user._id)
 
-        res.json({ success: true, token })
+        res.json({ success: true, token, message: "Registered Successfully" })
 
     } catch (error) {
         console.log(error);
@@ -67,19 +69,52 @@ const registerUser = async (req, res) => {
 
 // Route for admin login
 const adminLogin = async (req, res) => {
-    try {
-        const { email, password } = req.body
-        if (email === process.env.ADMIN_EMAIL && password == process.env.ADMIN_PASSWORD) {
-            const token = jwt.sign(email + password, process.env.JWT_SECRET)
-            res.json({ success: true, token })
-        }
-        else {
-            res.json({ success: false, message: "Invalid Credentials" })
-        }
-    } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: error.message })
-    }
-}
+    const { email, password } = req.body;
 
-export { loginUser, registerUser, adminLogin }
+    if (
+        email === process.env.ADMIN_EMAIL &&
+        password === process.env.ADMIN_PASSWORD
+    ) {
+        const token = jwt.sign(
+            {
+                email: process.env.ADMIN_EMAIL
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "6h" }
+        );
+        res.json({ success: true, token, message: "Logged in Successfully" });
+    } else {
+        res.json({ success: false, message: "Invalid Credentials" });
+    }
+};
+
+const adminLogout = (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.json({ success: false, message: 'No token provided' });
+        }
+
+        const token = authHeader.split(' ')[1];
+        const expiresAt = Date.now() + 6 * 60 * 60 * 1000; // 6h
+
+        // 🧹 Clean expired tokens before adding new one
+        const now = Date.now();
+        for (let i = tokenBlacklist.length - 1; i >= 0; i--) {
+            if (tokenBlacklist[i].expiresAt < now) {
+                tokenBlacklist.splice(i, 1);
+            }
+        }
+
+        // ➕ Add token to blacklist
+        tokenBlacklist.push({ token, expiresAt });
+
+        return res.json({ success: true, message: 'Logged out successfully' });
+    } catch (error) {
+        return res.json({ success: false, message: 'Logout failed' });
+    }
+};
+
+
+
+export { loginUser, registerUser, adminLogin, adminLogout, tokenBlacklist }

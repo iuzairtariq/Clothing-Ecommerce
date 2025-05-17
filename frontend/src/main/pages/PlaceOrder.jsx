@@ -1,4 +1,4 @@
-import { assets } from '@/assets/frontend_assets/assets';
+import { assets } from '@/main/frontend_assets/assets';
 import CartTotal from '@/components/CartTotal';
 import Title from '@/components/Title';
 import { Button } from '@/components/ui/button';

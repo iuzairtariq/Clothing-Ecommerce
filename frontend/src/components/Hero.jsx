@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { Button } from "@/components/ui/button"
-import { assets } from '@/assets/frontend_assets/assets'
+import { assets } from '@/main/frontend_assets/assets'
 import { ArrowRight } from 'lucide-react'
 import { ShopContext } from '@/context/ShopContext'
 

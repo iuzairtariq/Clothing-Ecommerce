@@ -16,13 +16,17 @@ import {
 import { Trash2Icon } from 'lucide-react'
 import Title from '@/components/Title'
 
-const List = ({ token }) => {
+const List = ({ adminToken }) => {
 
   const [list, setList] = useState([])
 
   const fetchList = async () => {
     try {
-      const response = await axios.get(backendUrl + '/api/product/list')
+      const response = await axios.get(backendUrl + '/api/product/list', {
+        headers: {
+          Authorization: `Bearer ${adminToken}` // ← Token send karo
+        }
+      })
       // console.log(response.data);
 
       if (response.data.success) {
@@ -40,7 +44,7 @@ const List = ({ token }) => {
 
   const removeProduct = async (id) => {
     try {
-      const response = await axios.post(backendUrl + '/api/product/remove', { id }, { headers: { token } })
+      const response = await axios.post(backendUrl + '/api/product/remove', { id }, { headers: { adminToken } })
       if (response.data.success) {
         toast.success(response.data.message)
         await fetchList()
@@ -59,7 +63,7 @@ const List = ({ token }) => {
   }, [])
 
   return (
-    <>
+    <div className=''>
       <Title text1={'LIST'} text2={'PRODUCTS'} />
       <Table>
         <TableHeader>
@@ -74,7 +78,7 @@ const List = ({ token }) => {
         <TableBody>
           {list.map((item, index) => (
             <TableRow key={index}>
-              <TableCell>{<img src={item.image[0]} />}</TableCell>
+              <TableCell className='p-2 sm:p-5'>{<img src={item.image[0]} />}</TableCell>
               <TableCell>{item.name}</TableCell>
               <TableCell>{item.category}</TableCell>
               <TableCell>{item.price}</TableCell>
@@ -83,7 +87,7 @@ const List = ({ token }) => {
           ))}
         </TableBody>
       </Table>
-    </>
+    </div>
   )
 }
 

@@ -4,16 +4,20 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
-const Orders = ({ token }) => {
+const AdminOrders = ({ adminToken }) => {
 
   const [orders, setOrders] = useState([])
 
   const fetchAllOrders = async () => {
-    if (!token) {
-      return null
-    }
+    if (!adminToken) return;
+
     try {
-      const response = await axios.post(backendUrl + '/api/order/list', {}, { headers: { token } })
+      const response = await axios.get(backendUrl + '/api/order/list', {
+        headers: {
+          Authorization: `Bearer ${adminToken}`
+        }
+      });
+
       // console.log(response.data);
 
       if (response.data.success) {
@@ -28,7 +32,11 @@ const Orders = ({ token }) => {
 
   const statusHandler = async (event, orderId) => {
     try {
-      const response = await axios.post(backendUrl + '/api/order/status', { orderId, status: event.target.value }, { headers: { token } })
+      const response = await axios.post(backendUrl + '/api/order/status', { orderId, status: event.target.value }, {
+        headers: {
+          Authorization: `Bearer ${adminToken}` 
+        }
+      })
 
       if (response.data.success) {
         await fetchAllOrders()
@@ -43,7 +51,7 @@ const Orders = ({ token }) => {
 
   useEffect(() => {
     fetchAllOrders()
-  }, [token])
+  }, [])
 
   return (
     <div>
@@ -92,4 +100,4 @@ const Orders = ({ token }) => {
   )
 }
 
-export default Orders
+export default AdminOrders
