@@ -1,71 +1,89 @@
-import ProductItem from '@/components/ProductItem'
-import Title from '@/components/Title'
-import { ShopContext } from '@/context/ShopContext'
+// src/components/Collection.jsx
 import React, { useContext, useEffect, useState } from 'react'
+import { ShopContext } from '@/context/ShopContext'
+import Title from '@/components/Title'
+import ProductItem from '@/components/ProductItem'
 
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { PlayIcon } from 'lucide-react'
 
-
 const Collection = () => {
-  const { products, search } = useContext(ShopContext)
+  const { displayProducts } = useContext(ShopContext)
   const [showFilter, setShowFilter] = useState(false)
   const [filterProducts, setFilterProducts] = useState([])
   const [category, setCategory] = useState([])
   const [subCategory, setSubCategory] = useState([])
-  const [sortType, setSortType] = React.useState("relavent")
+  const [sortType, setSortType] = useState("relavent")
 
+  // Toggle category
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {
-      setCategory(prev => prev.filter(item => item !== e.target.value)) // filter karke wo item le ao jo e.target.value ke barabar nhi hain
-    }
-    else {
+      setCategory(prev => prev.filter(item => item !== e.target.value))
+    } else {
       setCategory(prev => [...prev, e.target.value])
     }
   }
 
+  // Toggle subCategory
   const toggleSubCategory = (e) => {
     if (subCategory.includes(e.target.value)) {
       setSubCategory(prev => prev.filter(item => item !== e.target.value))
-    }
-    else {
+    } else {
       setSubCategory(prev => [...prev, e.target.value])
     }
   }
 
+  // ① Apply Filter on displayProducts
   const applyFilter = () => {
-    let copyProducts = products.slice()
+    // Agar displayProducts me sirf nulls hain, to usi set karo
+    const allNull = Array.isArray(displayProducts) && displayProducts.every(item => item === null)
+    if (allNull) {
+      // Abhi data load ho raha hai, seedha placeholders rakho:
+      setFilterProducts(displayProducts)
+      return
+    }
 
-    if (search) {
-      copyProducts = copyProducts.filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
-    }
+    // Jab real data hai, to filtering karo:
+    let copy = [...displayProducts]  // shallow copy
+
+    // Example: agar search functionality needed ho to:
+    // if (search) copy = copy.filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
+
+    // Category filter
     if (category.length > 0) {
-      copyProducts = copyProducts.filter(item => category.includes(item.category))
+      copy = copy.filter(item => item && category.includes(item.category))
     }
+    // SubCategory filter
     if (subCategory.length > 0) {
-      copyProducts = copyProducts.filter(item => subCategory.includes(item.subCategory))
+      copy = copy.filter(item => item && subCategory.includes(item.subCategory))
     }
-    setFilterProducts(copyProducts)
+
+    // Ab copy me filtered real items honge (no nulls)
+    setFilterProducts(copy)
   }
 
+  // ② Sort function also on filterProducts
   const sortProducts = () => {
-    let copyFP = filterProducts.slice()
+    // Agar filterProducts me nulls hain (loading stage), skip sort:
+    const hasOnlyNulls = filterProducts.every(item => item === null)
+    if (hasOnlyNulls) return
 
+    let copyFP = [...filterProducts]
     switch (sortType) {
       case 'low-high':
-        setFilterProducts(copyFP.sort((a, b) => (a.price - b.price)))
+        copyFP.sort((a, b) => a.price - b.price)
+        setFilterProducts(copyFP)
         break;
       case 'high-low':
-        setFilterProducts(copyFP.sort((a, b) => (b.price - a.price)))
+        copyFP.sort((a, b) => b.price - a.price)
+        setFilterProducts(copyFP)
         break;
       default:
         applyFilter()
@@ -73,20 +91,24 @@ const Collection = () => {
     }
   }
 
+  // ③ Whenever displayProducts, category, subCategory change → applyFilter
   useEffect(() => {
     applyFilter()
-  }, [category, subCategory, search, products])
+  }, [displayProducts, category, subCategory])
 
+  // ④ Whenever sortType changes → sortProducts
   useEffect(() => {
     sortProducts()
   }, [sortType])
 
   return (
     <div className='flex flex-col sm:flex-row gap-4 py-8'>
-
-      <div className='min-w-52 '>
-        <p onClick={() => setShowFilter(!showFilter)}
-          className='text-slate-600 dark:text-slate-400 text-xl flex gap-1 items-center font-medium mb-3 sm:mt-2 cursor-pointer sm:cursor-default'>
+      {/* Sidebar Filters */}
+      <div className='min-w-52'>
+        <p
+          onClick={() => setShowFilter(!showFilter)}
+          className='text-slate-600 dark:text-slate-400 text-xl flex gap-1 items-center font-medium mb-3 sm:mt-2 cursor-pointer sm:cursor-default'
+        >
           FILTERS
           <PlayIcon size={15} className={`sm:hidden ${showFilter ? 'rotate-90' : ''}`} />
         </p>
@@ -118,8 +140,10 @@ const Collection = () => {
         </div>
       </div>
 
-      <div>
-        <div className='flex justify-between'>
+      {/* Products Section */}
+      <div className='flex-1'>
+        {/* Header with Title & Sort */}
+        <div className='flex justify-between mb-4'>
           <Title text1={'ALL'} text2={'COLLECTIONS'} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -135,12 +159,11 @@ const Collection = () => {
           </DropdownMenu>
         </div>
 
-
-
+        {/* Grid of Products / Skeletons */}
         <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6'>
-          {
-            filterProducts.map((item, index) => (<ProductItem key={index} id={item._id} name={item.name} image={item.image} price={item.price} />))
-          }
+          {filterProducts.map((item, index) => (
+            <ProductItem key={index} item={item} />
+          ))}
         </div>
       </div>
     </div>

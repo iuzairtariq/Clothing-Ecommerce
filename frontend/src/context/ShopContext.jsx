@@ -15,6 +15,11 @@ const ShopContextProvider = (props) => {
     const [cartItems, setCartItems] = useState({});
     const [products, setProducts] = useState([])
     const [token, setToken] = useState('')
+    // Jab data na aaya ho, tab magar ye array hamesha “placeholders” dikhayegi:
+    const placeholderCount = 10
+    const [displayProducts, setDisplayProducts] = useState(
+        Array.from({ length: placeholderCount }).map(() => null)
+    )
 
     const navigate = useNavigate()
 
@@ -97,19 +102,25 @@ const ShopContextProvider = (props) => {
 
     const getProductData = async () => {
         try {
+            // ① Fetch se pehle, displayProducts ko “placeholder” bana do:
+            setDisplayProducts(Array.from({ length: placeholderCount }).map(() => null))
+
+            await new Promise(resolve => setTimeout(resolve, 2000))
             const response = await axios.get(backendUrl + '/api/product/list')
-            // console.log(response);
-
-            if (response.data.success) {
+            if (response.data.success && Array.isArray(response.data.products)) {
                 setProducts(response.data.products)
-            }
-            else {
+                // Fetch complete → displayProducts mein real products daalo:
+                setDisplayProducts(response.data.products)
+            } else {
                 toast.error(response.data.message)
+                setProducts([])
+                setDisplayProducts([])
             }
-
         } catch (error) {
-            console.log(error);
+            console.log(error)
             toast.error(error.message)
+            setProducts([])
+            setDisplayProducts([])
         }
     }
 
@@ -132,13 +143,12 @@ const ShopContextProvider = (props) => {
         cartItems, setCartItems, addToCart,
         getCartCount, updateQuantity,
         getCartAmount, backendUrl,
-        token, setToken, navigate
+        token, setToken, navigate, displayProducts
     }
 
     useEffect(() => {
-        // console.log(cartItems);
         getProductData()
-    }, [cartItems]);
+    }, [])
 
     useEffect(() => {
         if (!token && localStorage.getItem('token')) {

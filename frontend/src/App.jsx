@@ -32,7 +32,7 @@ const App = () => {
   const navigate = useNavigate();
 
   const showFooter = !(
-    ['/login', '/orders', '/cart', '/placeorder', '/collection'].some(path =>
+    ['/login', '/orders', '/cart', '/placeorder', '/collection', '/product'].some(path =>
       location.pathname.startsWith(path)
     ) ||
     location.pathname.startsWith('/admin') // Admin ke sab routes exclude karo

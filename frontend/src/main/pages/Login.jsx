@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 
 const Login = () => {
   const [currentState, setCurrentState] = useState('Login')
-  const { token, setToken, backendUrl, navigate } = useContext(ShopContext)
+  const { setToken, backendUrl, navigate } = useContext(ShopContext)
   const [isLoading, setIsLoading] = useState(false) // Step 1: Add isLoading state
 
   const [name, setName] = useState('')
