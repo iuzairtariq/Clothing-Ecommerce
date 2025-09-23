@@ -12,17 +12,16 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { PlayIcon } from 'lucide-react'
+import { PlayIcon, SearchX, Package } from 'lucide-react'
 
 const Collection = () => {
-  const { displayProducts } = useContext(ShopContext)
+  const { displayProducts, isLoading } = useContext(ShopContext)
   const [showFilter, setShowFilter] = useState(false)
   const [filterProducts, setFilterProducts] = useState([])
   const [category, setCategory] = useState([])
   const [subCategory, setSubCategory] = useState([])
   const [sortType, setSortType] = useState("relavent")
 
-  // Toggle category
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {
       setCategory(prev => prev.filter(item => item !== e.target.value))
@@ -31,7 +30,6 @@ const Collection = () => {
     }
   }
 
-  // Toggle subCategory
   const toggleSubCategory = (e) => {
     if (subCategory.includes(e.target.value)) {
       setSubCategory(prev => prev.filter(item => item !== e.target.value))
@@ -40,38 +38,26 @@ const Collection = () => {
     }
   }
 
-  // ① Apply Filter on displayProducts
   const applyFilter = () => {
-    // Agar displayProducts me sirf nulls hain, to usi set karo
     const allNull = Array.isArray(displayProducts) && displayProducts.every(item => item === null)
     if (allNull) {
-      // Abhi data load ho raha hai, seedha placeholders rakho:
       setFilterProducts(displayProducts)
       return
     }
 
-    // Jab real data hai, to filtering karo:
-    let copy = [...displayProducts]  // shallow copy
+    let copy = [...displayProducts]
 
-    // Example: agar search functionality needed ho to:
-    // if (search) copy = copy.filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
-
-    // Category filter
     if (category.length > 0) {
       copy = copy.filter(item => item && category.includes(item.category))
     }
-    // SubCategory filter
     if (subCategory.length > 0) {
       copy = copy.filter(item => item && subCategory.includes(item.subCategory))
     }
 
-    // Ab copy me filtered real items honge (no nulls)
     setFilterProducts(copy)
   }
 
-  // ② Sort function also on filterProducts
   const sortProducts = () => {
-    // Agar filterProducts me nulls hain (loading stage), skip sort:
     const hasOnlyNulls = filterProducts.every(item => item === null)
     if (hasOnlyNulls) return
 
@@ -91,19 +77,25 @@ const Collection = () => {
     }
   }
 
-  // ③ Whenever displayProducts, category, subCategory change → applyFilter
+  const clearAllFilters = () => {
+    setCategory([])
+    setSubCategory([])
+    setSortType("relavent")
+  }
+
+  const hasRealProducts = filterProducts.some(item => item !== null)
+  const isShowingSkeletons = filterProducts.every(item => item === null) && isLoading
+
   useEffect(() => {
     applyFilter()
   }, [displayProducts, category, subCategory])
 
-  // ④ Whenever sortType changes → sortProducts
   useEffect(() => {
     sortProducts()
   }, [sortType])
 
   return (
     <div className='flex flex-col sm:flex-row gap-4 py-8'>
-      {/* Sidebar Filters */}
       <div className='min-w-52'>
         <p
           onClick={() => setShowFilter(!showFilter)}
@@ -116,33 +108,42 @@ const Collection = () => {
           <div className='border p-3'>
             <p className='text-sm font-medium'>CATEGORIES</p>
             <p className='flex gap-2'>
-              <input className='w-4' type="checkbox" value='Men' onChange={toggleCategory} />Men
+              <input className='w-4' type="checkbox" value='Men' onChange={toggleCategory} checked={category.includes('Men')} />Men
             </p>
             <p className='flex gap-2'>
-              <input className='w-4' type="checkbox" value='Women' onChange={toggleCategory} />Women
+              <input className='w-4' type="checkbox" value='Women' onChange={toggleCategory} checked={category.includes('Women')} />Women
             </p>
             <p className='flex gap-2'>
-              <input className='w-4' type="checkbox" value='Kids' onChange={toggleCategory} />Kids
+              <input className='w-4' type="checkbox" value='Kids' onChange={toggleCategory} checked={category.includes('Kids')} />Kids
             </p>
           </div>
           <div className='border p-3'>
             <p className='text-sm font-medium'>TYPE</p>
             <p className='flex gap-2'>
-              <input className='w-4' type="checkbox" value={'Topwear'} onChange={toggleSubCategory} />Topwear
+              <input className='w-4' type="checkbox" value={'Topwear'} onChange={toggleSubCategory} checked={subCategory.includes('Topwear')} />Topwear
             </p>
             <p className='flex gap-2'>
-              <input className='w-4' type="checkbox" value={'Bottomwear'} onChange={toggleSubCategory} />Bottomwear
+              <input className='w-4' type="checkbox" value={'Bottomwear'} onChange={toggleSubCategory} checked={subCategory.includes('Bottomwear')} />Bottomwear
             </p>
             <p className='flex gap-2'>
-              <input className='w-4' type="checkbox" value={'Winterwear'} onChange={toggleSubCategory} />Winterwear
+              <input className='w-4' type="checkbox" value={'Winterwear'} onChange={toggleSubCategory} checked={subCategory.includes('Winterwear')} />Winterwear
             </p>
           </div>
+
+          {(category.length > 0 || subCategory.length > 0 || sortType !== "relavent") && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearAllFilters}
+              className="w-full"
+            >
+              Clear All Filters
+            </Button>
+          )}
         </div>
       </div>
 
-      {/* Products Section */}
       <div className='flex-1'>
-        {/* Header with Title & Sort */}
         <div className='flex justify-between mb-4'>
           <Title text1={'ALL'} text2={'COLLECTIONS'} />
           <DropdownMenu>
@@ -151,7 +152,7 @@ const Collection = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
               <DropdownMenuRadioGroup value={sortType} onValueChange={setSortType}>
-                <DropdownMenuRadioItem value="relavent">Sort by: Relavent</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="relavent">Sort by: Relevant</DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="low-high">Sort by: Low to High</DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="high-low">Sort by: High to Low</DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
@@ -159,12 +160,54 @@ const Collection = () => {
           </DropdownMenu>
         </div>
 
-        {/* Grid of Products / Skeletons */}
         <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6'>
-          {filterProducts.map((item, index) => (
-            <ProductItem key={index} item={item} />
+          {isShowingSkeletons && filterProducts.map((item, index) => (
+            <ProductItem key={`skeleton-${index}`} item={item} />
+          ))}
+
+          {!isShowingSkeletons && hasRealProducts && filterProducts.map((item, index) => (
+            item && <ProductItem key={item._id || index} item={item} />
           ))}
         </div>
+
+        {!isLoading && !hasRealProducts && !isShowingSkeletons && (
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <div className="text-center">
+              <div className="mb-4">
+                {category.length > 0 || subCategory.length > 0 ? (
+                  <SearchX className="h-16 w-16 text-slate-400 mx-auto mb-4" />
+                ) : (
+                  <Package className="h-16 w-16 text-slate-400 mx-auto mb-4" />
+                )}
+              </div>
+
+              <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                {category.length > 0 || subCategory.length > 0
+                  ? "No products match your filters"
+                  : "No products found"
+                }
+              </h3>
+
+              <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-md">
+                {category.length > 0 || subCategory.length > 0
+                  ? "Try adjusting your filters or search criteria to find what you're looking for."
+                  : "It looks like there are no products available at the moment. Please check back later."
+                }
+              </p>
+
+              {(category.length > 0 || subCategory.length > 0 || sortType !== "relavent") && (
+                <Button
+                  onClick={clearAllFilters}
+                  variant="outline"
+                  className="inline-flex items-center gap-2"
+                >
+                  <SearchX className="h-4 w-4" />
+                  Clear All Filters
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

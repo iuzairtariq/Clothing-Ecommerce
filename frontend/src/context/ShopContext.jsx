@@ -15,8 +15,9 @@ const ShopContextProvider = (props) => {
     const [cartItems, setCartItems] = useState({});
     const [products, setProducts] = useState([])
     const [token, setToken] = useState('')
-    // Jab data na aaya ho, tab magar ye array hamesha “placeholders” dikhayegi:
+    const [isLoading, setIsLoading] = useState(true)
     const placeholderCount = 10
+
     const [displayProducts, setDisplayProducts] = useState(
         Array.from({ length: placeholderCount }).map(() => null)
     )
@@ -31,13 +32,13 @@ const ShopContextProvider = (props) => {
         let cartData = structuredClone(cartItems);
 
         if (!cartData[itemId]) {
-            cartData[itemId] = {}; // Initialize the item if it doesn't exist
+            cartData[itemId] = {};
         }
 
         if (cartData[itemId][size]) {
-            cartData[itemId][size] += 1; // for same item same size
+            cartData[itemId][size] += 1;
         } else {
-            cartData[itemId][size] = 1; // for same item but different size
+            cartData[itemId][size] = 1;
         }
         setCartItems(cartData);
         toast.success('Added to cart')
@@ -53,8 +54,8 @@ const ShopContextProvider = (props) => {
 
     const getCartCount = () => {
         let totalCount = 0
-        for (const items in cartItems) { // for item
-            for (const item in cartItems[items]) { // for size
+        for (const items in cartItems) {
+            for (const item in cartItems[items]) {
                 try {
                     if (cartItems[items][item] > 0) {
                         totalCount += cartItems[items][item]
@@ -71,7 +72,8 @@ const ShopContextProvider = (props) => {
         let cartData = structuredClone(cartItems)
         cartData[itemId][size] = quantity
 
-        setCartItems(cartData, toast.info('Product updated'))
+        setCartItems(cartData)
+        toast.info('Product updated')
 
         if (token) {
             try {
@@ -102,25 +104,29 @@ const ShopContextProvider = (props) => {
 
     const getProductData = async () => {
         try {
-            // ① Fetch se pehle, displayProducts ko “placeholder” bana do:
+            setIsLoading(true)
+            // Show skeleton during loading
             setDisplayProducts(Array.from({ length: placeholderCount }).map(() => null))
 
-            await new Promise(resolve => setTimeout(resolve, 2000))
+            // Simulate loading delay (remove this in production if not needed)
+            await new Promise(resolve => setTimeout(resolve, 1000))
+
             const response = await axios.get(backendUrl + '/api/product/list')
             if (response.data.success && Array.isArray(response.data.products)) {
                 setProducts(response.data.products)
-                // Fetch complete → displayProducts mein real products daalo:
                 setDisplayProducts(response.data.products)
             } else {
-                toast.error(response.data.message)
+                toast.error(response.data.message || 'Failed to fetch products')
                 setProducts([])
                 setDisplayProducts([])
             }
         } catch (error) {
             console.log(error)
-            toast.error(error.message)
+            toast.error(error.message || 'Failed to fetch products')
             setProducts([])
             setDisplayProducts([])
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -130,25 +136,65 @@ const ShopContextProvider = (props) => {
             if (response.data.success) {
                 setCartItems(response.data.cartData)
             }
-
         } catch (error) {
             console.log(error);
             toast.error(error.message)
         }
     }
 
+    // Filter products based on search
+    const filterProducts = (searchTerm) => {
+        if (!searchTerm || !searchTerm.trim()) {
+            setDisplayProducts(products)
+            return
+        }
+
+        const term = searchTerm.trim().toLowerCase()
+        const filtered = products.filter(product => {
+            const name = (product.name || '').toLowerCase()
+            const description = (product.description || '').toLowerCase()
+            const category = (product.category || '').toLowerCase()
+
+            return name.includes(term) ||
+                description.includes(term) ||
+                category.includes(term)
+        })
+
+        setDisplayProducts(filtered)
+    }
+
     const value = {
-        products, currency, deliveryFee,
-        search, setSearch, showSearch, setShowSearch,
-        cartItems, setCartItems, addToCart,
-        getCartCount, updateQuantity,
-        getCartAmount, backendUrl,
-        token, setToken, navigate, displayProducts
+        products,
+        currency,
+        deliveryFee,
+        search,
+        setSearch,
+        showSearch,
+        setShowSearch,
+        cartItems,
+        setCartItems,
+        addToCart,
+        getCartCount,
+        updateQuantity,
+        getCartAmount,
+        backendUrl,
+        token,
+        setToken,
+        navigate,
+        displayProducts,
+        isLoading,
+        filterProducts
     }
 
     useEffect(() => {
         getProductData()
     }, [])
+
+    useEffect(() => {
+        if (!isLoading) {
+            filterProducts(search)
+        }
+    }, [search, products, isLoading])
 
     useEffect(() => {
         if (!token && localStorage.getItem('token')) {

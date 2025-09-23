@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { ModeToggle } from './ModeToggle';
 import { useNavigate } from 'react-router-dom';
@@ -8,13 +8,13 @@ import { backendUrl } from '@/App';
 
 const AdminNavbar = ({ setAdminToken }) => {
     const navigate = useNavigate();
+    const [scrolled, setScrolled] = useState(false);
 
     const handleLogout = async () => {
         try {
-            // Backend ko logout request bhejo, token bhejte hue
             const token = localStorage.getItem('admintoken');
             const response = await axios.post(
-                backendUrl + '/api/user/admin/logout', 
+                backendUrl + '/api/user/admin/logout',
                 {},
                 {
                     headers: { Authorization: `Bearer ${token}` }
@@ -22,7 +22,6 @@ const AdminNavbar = ({ setAdminToken }) => {
             );
 
             if (response.data.success) {
-                // Logout successful - localStorage aur state clean karo
                 setAdminToken('');
                 localStorage.removeItem('admintoken');
                 toast.success(response.data.message);
@@ -36,8 +35,16 @@ const AdminNavbar = ({ setAdminToken }) => {
         }
     };
 
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 0);
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
     return (
-        <div className='text-slate-600 dark:text-slate-400 flex h-14 justify-between items-center sticky top-0 z-10 rounded-b-xl border bg-background shadow-md px-4 sm:px-8 md:px-12 lg:px-16'>
+        <div className={`text-slate-600 dark:text-slate-400 flex h-14 justify-between items-center
+         sticky top-0 z-10 rounded-b-xl transition-shadow duration-500 bg-background px-4 sm:px-8 md:px-12 lg:px-16 ${scrolled ? 'shadow-md dark:shadow-lg' : ''}`}>
             <div>
                 <h1 className='text-2xl font-bold'>Clothing</h1>
             </div>

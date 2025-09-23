@@ -1,12 +1,6 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
     Menubar,
-    MenubarContent,
-    MenubarItem,
-    MenubarMenu,
-    MenubarSeparator,
-    MenubarShortcut,
-    MenubarTrigger,
 } from "@/components/ui/menubar"
 import { ModeToggle } from './ModeToggle'
 import { Link, NavLink } from 'react-router-dom'
@@ -33,6 +27,7 @@ import { toast } from 'react-toastify'
 
 const Navbar = () => {
     const { showSearch, setShowSearch, getCartCount, navigate, token, setToken, setCartItems } = useContext(ShopContext)
+    const [scrolled, setScrolled] = useState(false);
 
     const handleSearchClick = () => {
         if (location.pathname !== '/collection') {
@@ -49,8 +44,15 @@ const Navbar = () => {
         toast.success('Logged out Successfully')
     }
 
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 0);
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
     return (
-        <Menubar>
+        <Menubar className={`${scrolled ? 'shadow-md dark:shadow-lg' : ''}`}>
             <div>
                 <NavLink to='/'>
                     <h1 className='text-2xl font-bold text-slate-600 dark:text-slate-400' >CLOTHING</h1>

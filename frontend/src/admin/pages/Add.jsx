@@ -76,7 +76,7 @@ const Add = ({ adminToken }) => {
       <div>
         <Title text1={'ADD'} text2={'PRODUCT'} />
         <p className='mb-2'>Upload Image</p>
-
+        {/* hi */}
         <div className='flex gap-2'>
           <label htmlFor="image1">
             <img className='w-20 cursor-pointer' src={!image1 ? assets.upload_area : URL.createObjectURL(image1)} alt="" />

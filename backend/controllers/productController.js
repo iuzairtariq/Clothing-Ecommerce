@@ -1,3 +1,4 @@
+// backend/controllers/productController.js
 import { v2 as cloudinary } from 'cloudinary'
 import productModel from '../models/productModel.js'
 
@@ -34,7 +35,7 @@ const addProduct = async (req, res) => {
             image: imagesUrl,
         }
 
-        console.log(productData);
+        // console.log(productData);
 
         const product = new productModel(productData)
         await product.save()
