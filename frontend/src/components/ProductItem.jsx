@@ -5,7 +5,6 @@ import { ShopContext } from '@/context/ShopContext'
 import { Skeleton } from '@/components/ui/skeleton'
 
 const ProductItem = ({ item }) => {
-  // item agar null/incomplete ho, to skeleton:
   if (!item || !item._id) {
     return (
       <div className="space-y-2">
@@ -16,9 +15,7 @@ const ProductItem = ({ item }) => {
     )
   }
 
-  // Item valid hai: destructure karo
   const { _id, image, name, price } = item
-  // Context se currency ya koi aur cheez agar chahiye ho to:
   const { /* currency, agar zaroorat ho */ } = useContext(ShopContext)
 
   return (

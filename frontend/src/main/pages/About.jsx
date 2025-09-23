@@ -1,5 +1,4 @@
 import { assets } from '@/main/frontend_assets/assets'
-import Subscribtion from '@/components/Subscribtion'
 import Title from '@/components/Title'
 import React from 'react'
 
@@ -35,7 +34,6 @@ const About = () => {
                     <p className='text-slate-600 dark:text-slate-400'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid officia optio ipsum veniam provident voluptates!</p>
                 </div>
             </div>
-            <Subscribtion />
         </div>
     )
 }

@@ -2,7 +2,6 @@ import BestSeller from '@/components/BestSeller'
 import Hero from '@/components/Hero'
 import LatestCollection from '@/components/LatestCollection'
 import OurPolicy from '@/components/OurPolicy'
-import Subscribtion from '@/components/Subscribtion'
 import React from 'react'
 
 const Home = () => {
@@ -12,7 +11,6 @@ const Home = () => {
             <LatestCollection />
             <BestSeller />
             <OurPolicy />
-            <Subscribtion />
         </div>
     )
 }

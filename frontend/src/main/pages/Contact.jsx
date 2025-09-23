@@ -1,5 +1,4 @@
 import { assets } from '@/main/frontend_assets/assets'
-import Subscribtion from '@/components/Subscribtion'
 import Title from '@/components/Title'
 import { Button } from '@/components/ui/button'
 import React from 'react'
@@ -21,7 +20,6 @@ const Contact = () => {
           <Button>Explore Jobs</Button>
         </div>
       </div>
-      <Subscribtion />
     </div>
   )
 }
