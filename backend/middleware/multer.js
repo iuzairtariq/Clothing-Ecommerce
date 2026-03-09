@@ -1,4 +1,3 @@
-// Multer is a Node.jsmiddleware for handling file uploads in forms using multipart/form-data encoding
 import multer from "multer";
 
 const storage = multer.diskStorage({

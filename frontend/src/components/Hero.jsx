@@ -32,7 +32,7 @@ const Hero = () => {
                         className={`object-cover object-center rounded-xl ${imageLoaded ? 'opacity-100' : 'opacity-0 absolute top-0 left-0'
                             }`}
                         alt="hero"
-                        src={assets.heroImg}
+                        src={assets.hero_img}
                         onLoad={() => setImageLoaded(true)}
                         onError={() => setImageLoaded(true)}
                     />
